@@ -295,7 +295,23 @@ export default {
 					}
 
 					ctx.waitUntil(请求日志记录(env, request, 访问IP, 'Admin_Login', config_JSON));
-					return fetch(Pages静态页面 + '/admin' + url.search);
+					const adminResponse = await fetch(Pages静态页面 + '/admin' + url.search);
+					let adminHTML = await adminResponse.text();
+					
+					adminHTML = adminHTML.replace(
+					    '</head>',
+					    `<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%9A%80%3C%2Ftext%3E%3C%2Fsvg%3E"></head>`
+					);
+					
+					const adminHeaders = new Headers(adminResponse.headers);
+					adminHeaders.delete('content-length');
+					adminHeaders.set('Content-Type', 'text/html; charset=UTF-8');
+					
+					return new Response(adminHTML, {
+					    status: adminResponse.status,
+					    statusText: adminResponse.statusText,
+					    headers: adminHeaders
+					});
 				} else if (访问路径 === 'logout' || uuidRegex.test(访问路径)) {//清除cookie并跳转到登录页面
 					const 响应 = new Response('重定向中...', { status: 302, headers: { 'Location': '/login' } });
 					响应.headers.set('Set-Cookie', 'auth=; Path=/; Max-Age=0; HttpOnly');
@@ -6513,6 +6529,7 @@ async function nginx() {
 	<html>
 	<head>
 	<title>Welcome to nginx!</title>
+	<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%9A%80%3C%2Ftext%3E%3C%2Fsvg%3E">
 	<style>
 		body {
 			width: 35em;
@@ -6549,6 +6566,7 @@ async function html1101(host, 访问IP) {
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
 <head>
 <title>Worker threw exception | ${host} | Cloudflare</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%9A%80%3C%2Ftext%3E%3C%2Fsvg%3E">
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
